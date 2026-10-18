@@ -1,0 +1,6 @@
+{
+  "name": "exam-mcp",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": { "start": "node server.js", "test": "node check.mjs" }
+}
