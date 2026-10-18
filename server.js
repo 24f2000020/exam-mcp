@@ -1,6 +1,9 @@
 // Node adapter so worker.js runs as a plain web service (Render).
 import http from "node:http";
 import worker from "./worker.js";
+import { load } from "./ledger.js";
+
+load().catch(() => {}); // warm the ledger cache on boot
 
 http.createServer(async (req, res) => {
   const chunks = [];

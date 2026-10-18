@@ -1,4 +1,6 @@
 // Minimal stateless MCP server (Streamable HTTP, JSON responses) with one tool.
+import { load, answer } from "./ledger.js";
+
 const EMAIL = "24f2000020@ds.study.iitm.ac.in";
 const TOOL = {
   name: "solve_challenge",
@@ -43,6 +45,14 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers
 export default {
   async fetch(req) {
     if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
+    if (new URL(req.url).pathname === "/ask" && req.method === "POST") {
+      try {
+        const { question } = await req.json();
+        return Response.json({ answer: answer(String(question || ""), await load()) }, { headers: CORS });
+      } catch (e) {
+        return Response.json({ error: String(e) }, { status: 400, headers: CORS });
+      }
+    }
     if (req.method !== "POST") return new Response("MCP endpoint: POST JSON-RPC", { status: 405, headers: CORS });
     let body;
     try { body = await req.json(); } catch {
